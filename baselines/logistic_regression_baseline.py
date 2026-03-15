@@ -32,43 +32,12 @@ class Model:
             random_state=42
         )
 
-        X_train_bow = self.vectorizer.fit_transform(X_train)
-        X_val_bow = self.vectorizer.transform(X_val)
+        X_train_bow = self.vectorizer.fit_transform(X_train[:, -1])
+        X_val_bow = self.vectorizer.transform(X_val[:, -1])
 
         # Train Logistic Regression model
         self.lr_model.fit(X_train_bow, y_train)
 
-        # Validation metrics
-        val_preds = self.lr_model.predict(X_val_bow)
-        val_acc = accuracy_score(y_val, val_preds)
-        val_f1 = f1_score(y_val, val_preds, zero_division=0)
-
-        print(f"Validation - Acc: {val_acc:.4f} - F1: {val_f1:.4f}")
-
     def predict(self, X):
-        X_bow = self.vectorizer.transform(X)
+        X_bow = self.vectorizer.transform(X[:, -1])
         return self.lr_model.predict(X_bow)
-        
-# Load data
-train_data_path = 'PATH'
-print("Loading data...")
-train_df = pd.read_csv(train_data_path)
-
-print(f"Train set: {len(train_df)} samples")
-
-# Combine text features
-print("\nCombining text features...")
-train_df['combined_text'] = (
-    train_df['sender'].fillna('') + ' ' + 
-    train_df['subject'].fillna('') + ' ' + 
-    train_df['body'].fillna('')
-)
-
-# Prepare data
-X_train = train_df['combined_text']
-y_train = train_df['label']
-
-# Train model
-print("\nTraining model...")
-model = Model()
-model.fit(X_train, y_train)
