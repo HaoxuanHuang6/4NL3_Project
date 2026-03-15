@@ -16,6 +16,7 @@ with open("./labeled_CEAS_08_preprocessed_shuffled.csv", "r", encoding="utf-8") 
 train_split_index = int(train_ratio*len(df))
 train_df = df.iloc[:train_split_index, :].copy()
 test_df = df.iloc[train_split_index:, :].copy()
+test_df_label = test_df['label'].copy()
 
 test_df = test_df.drop("label", axis=1)
 
@@ -68,3 +69,6 @@ with open("../baselines/train.csv", "w", newline='', encoding="utf-8") as fh:
 
 with open("../baselines/test.csv", "w", newline='', encoding="utf-8") as fh:
     test_df.to_csv(fh, index=False, na_rep='')
+
+with open("../baselines/test_labels.csv", "w", newline='', encoding="utf-8") as fh:
+    test_df_label.to_csv(fh, index=False, na_rep='')
